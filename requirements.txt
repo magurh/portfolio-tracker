@@ -1,0 +1,22 @@
+# Standard libraries
+numpy>=2.0.0
+pandas>=2.2.2
+matplotlib
+plotly==5.22.0
+time
+datetime
+scipy
+seaborn
+# Data scrapping
+requests
+json
+# Paths in notebooks
+sys
+os
+# Data fetching
+forex_python.converter
+cryptocompare
+yfinance
+# GUI
+tkinter
+pyinstaller
