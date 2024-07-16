@@ -2,8 +2,31 @@ import yfinance as yf
 import cryptocompare
 from forex_python.converter import CurrencyRates
 
+import requests
+
+
+def fetch_exchange_rate(base_currency, target_currency):
+    """
+    Fetches the exchange rate between two currencies.
+
+    Parameters:
+    - base_currency: Base currency code (e.g., 'USD')
+    - target_currency: Target currency code (e.g., 'GBP')
+
+    Returns:
+    - Exchange rate from base_currency to target_currency.
+    """
+    ticker = f"{base_currency}{target_currency}=X"
+    data = yf.Ticker(ticker)
+    hist = data.history(period="1d")
+    if not hist.empty:
+        return hist['Close'][0]
+    else:
+        return None
+
+
 # Initialize CurrencyRates object for fetching exchange rates
-currency_converter = CurrencyRates()
+# currency_converter = CurrencyRates()
 
 def fetch_stock_price(symbol, currency='USD'):
     """
@@ -42,17 +65,3 @@ def fetch_crypto_price(symbol, currency='USD'):
         return cryptocompare.get_price(symbol, currency='GBP')[symbol]['GBP']
     else:
         return cryptocompare.get_price(symbol, currency='USD')[symbol]['USD']
-
-
-def fetch_exchange_rate(base_currency, target_currency):
-    """
-    Fetches the exchange rate between two currencies.
-
-    Parameters:
-    - base_currency: Base currency code (e.g., 'USD')
-    - target_currency: Target currency code (e.g., 'GBP')
-
-    Returns:
-    - Exchange rate from base_currency to target_currency.
-    """
-    return currency_converter.get_rate(base_currency, target_currency)

@@ -1,4 +1,4 @@
-# ML Encryption
+# Portfolio Tracker
 
 ### Setup
 
@@ -27,5 +27,23 @@ source venv/bin/activate
 
 ```
 pip install -r requirements.txt
+```
+
+4. Set path (for absolute imports)
+
+On Windows:
+```
+set PYTHONPATH=.
+```
+
+On MacOS/Linux:
+```
+export PYTHONPATH=.
+```
+
+5. Run app:
+
+```
+python app/gui.py
 ```
 

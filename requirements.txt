@@ -1,12 +1,12 @@
 # Standard libraries
-numpy>=2.0.0
-pandas>=2.2.2
+numpy
+pandas
 matplotlib
-plotly==5.22.0
+# plotly
 time
 datetime
-scipy
-seaborn
+# scipy
+# seaborn
 # Data scrapping
 requests
 json
