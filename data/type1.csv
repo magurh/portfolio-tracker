@@ -1,2 +1,7 @@
-date,security,type_of_asset,action,quantity,amount_usd,total_transaction_price_usd
-6/19/2020,BA,Stock,Buy,2,189.73,379.46
+date,security,type_of_asset,action,quantity,total_transaction_price_usd
+01/01/2023,TSLA,stock,buy,10,650
+01/02/2023,AAPL,stock,buy,5,50
+01/03/2023,BTC,crypto,buy,0.2,3000
+01/04/2023,VOO,index fund,buy,15,4500
+01/05/2023,ETH,crypto,sell,0.1,2500
+01/06/2023,TSLA,stock,sell,5,325

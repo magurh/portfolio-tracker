@@ -1,1 +1,7 @@
-date,commision_type,amount_usd
+date,commision_type,amount
+01/01/2023,transaction,5
+15/01/2023,platform,2.5
+01/02/2023,transaction,4
+15/02/2023,platform,2
+01/03/2023,transaction,6
+15/03/2023,platform,3

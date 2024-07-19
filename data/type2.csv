@@ -1,1 +1,5 @@
-date	security_1	security_2	quantity_of_security_1	quantity_of_security_2
+date,security_1,security_2,quantity_security_1,quantity_security_2
+15/01/2023,BTC,ETH,0.1,1.5
+15/02/2023,ETH,XRP,2,300
+15/04/2023,BTC,ADA,0.1,100
+15/05/2023,ETH,LTC,3,6

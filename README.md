@@ -1,5 +1,21 @@
 # Portfolio Tracker
 
+### Status
+
+Stock Analytics:
+
+- [ ] Current portfolio dashboard: valuation and breakdown
+- [ ] Dividends and Commissions
+- [ ] Realized and unrealized gains from historic positions
+- [ ] Tax calculation on capital gains
+- [ ] Portfolio performance over time and benchmark comparison
+
+To be added:
+- [ ] Index funds
+- [ ] Crypto assets
+- [ ] Forex and cash positions
+
+
 ### Setup
 
 1. Clone the repository:

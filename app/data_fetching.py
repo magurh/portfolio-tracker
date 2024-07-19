@@ -1,9 +1,10 @@
+import ffn
 import yfinance as yf
-import cryptocompare
-from forex_python.converter import CurrencyRates
-
+from app.config import crypto_exchange_map
+import ccxt
 import requests
-
+# from forex_python.converter import CurrencyRates
+import requests
 
 def fetch_exchange_rate(base_currency, target_currency):
     """
@@ -25,29 +26,30 @@ def fetch_exchange_rate(base_currency, target_currency):
         return None
 
 
-# Initialize CurrencyRates object for fetching exchange rates
-# currency_converter = CurrencyRates()
 
-def fetch_stock_price(symbol, currency='USD'):
+def fetch_stock_prices(symbols, currency='USD'):
     """
-    Fetches the current price of a stock or index fund.
+    Fetches the current prices of multiple stocks or index funds.
 
     Parameters:
-    - symbol: Ticker symbol of the stock/index fund (e.g., 'AAPL' for Apple)
+    - symbols: List of ticker symbols of the stocks/index funds (e.g., ['AAPL', 'MSFT'])
     - currency: Currency to convert to ('USD' or 'GBP')
 
     Returns:
-    - Current price of the stock/index fund in the specified currency.
+    - Dictionary where keys are symbols and values are current prices in the specified currency.
     """
-    ticker = yf.Ticker(symbol)
-    data = ticker.history(period='1d')
-    if not data.empty:
-        if currency == 'GBP':
-            return data['Close'][0] * fetch_exchange_rate('USD', 'GBP')
-        else:
-            return data['Close'][0]
-    else:
-        return None
+    prices = {}
+    tickers = yf.Tickers(' '.join(symbols))
+    exchange_rate = fetch_exchange_rate('USD', 'GBP') if currency == 'GBP' else 1
+
+    for symbol in symbols:
+        ticker = tickers.tickers[symbol]
+        data = ticker.history(period='1d')
+        if not data.empty:
+            price = data['Close'].iloc[-1] * exchange_rate
+            prices[symbol] = price
+
+    return prices
 
 
 def fetch_crypto_price(symbol, currency='USD'):
@@ -61,7 +63,10 @@ def fetch_crypto_price(symbol, currency='USD'):
     Returns:
     - Current price of the cryptocurrency in the specified currency.
     """
-    if currency == 'GBP':
-        return cryptocompare.get_price(symbol, currency='GBP')[symbol]['GBP']
-    else:
-        return cryptocompare.get_price(symbol, currency='USD')[symbol]['USD']
+    exchange_name = crypto_exchange_map.get(symbol, 'binance')
+    exchange = getattr(ccxt, exchange_name)()
+    ticker = exchange.fetch_ticker(symbol + '/USDT')
+    price = ticker['last']
+
+    return price if currency == 'USD' else price * fetch_exchange_rate('USD', currency)
+

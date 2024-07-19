@@ -14,9 +14,9 @@ json
 sys
 os
 # Data fetching
-forex_python.converter
-cryptocompare
+ccxt
 yfinance
+ffn
 # GUI
 tkinter
 pyinstaller
