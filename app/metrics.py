@@ -65,3 +65,48 @@ class Stocks:
             current_values[symbol] = shares * current_prices.get(symbol, 0)
         
         return current_values
+
+
+class PortfolioManager:
+    def __init__(self, transactions):
+        self.transactions = transactions
+        self.stocks = Stocks()
+        self.stocks.process_transactions(self.transactions[self.transactions['type_of_asset'] == 'stock'])
+        self._current_values = None
+    
+    def _update_current_values(self):
+        """
+        Update the current values of the stocks and store them in an internal attribute.
+        """
+        self._current_values = self.stocks.fetch_current_values()
+    
+    def current_portfolio_value(self):
+        """
+        Calculate the current value of the portfolio.
+
+        Returns:
+        - total_value (float): The total current value of the portfolio in USD.
+        """
+        if self._current_values is None:
+            self._update_current_values()
+        
+        total_value = sum(self._current_values.values())
+        return total_value
+    
+    def stock_percentage_of_portfolio(self):
+        """
+        Calculate the percentage of each stock in the total portfolio.
+
+        Returns:
+        - stock_percentages (dict): A dictionary where keys are stock names and values are their percentage of the total portfolio.
+        """
+        if self._current_values is None:
+            self._update_current_values()
+        
+        total_value = self.current_portfolio_value()
+        
+        stock_percentages = {}
+        for symbol, value in self._current_values.items():
+            stock_percentages[symbol] = (value / total_value) * 100 if total_value != 0 else 0
+        
+        return stock_percentages
