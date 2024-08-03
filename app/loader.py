@@ -7,6 +7,9 @@ CURRENT_DATE = datetime.datetime.now().date()
 
 
 class DataLoader:
+    """
+    A class for loading the three types of datasets (if they exist in the data path).
+    """
     def __init__(self, type1_path, type2_path=None, type3_path=None):
         self.type1_df = pd.read_csv(type1_path)
         self.type2_df = pd.read_csv(type2_path) if type2_path else None

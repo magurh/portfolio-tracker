@@ -6,11 +6,13 @@
 
 Stock Analytics:
 
-- [ ] Current portfolio dashboard: valuation and breakdown
-- [ ] Dividends and Commissions
+- [x] Current portfolio dashboard: valuation and breakdown
+    - [x] Defined all neccesary functions
+    - ⏳ GUI integration
 - [ ] Realized and unrealized gains from historic positions
-- [ ] Tax calculation on capital gains
 - [ ] Portfolio performance over time and benchmark comparison
+- [ ] Dividends and Commissions
+- [ ] Tax calculation on capital gains
 
 To be added:
 - [ ] Index funds

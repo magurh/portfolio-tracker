@@ -1,3 +1,10 @@
+"""
+Latest updates: 03/Aug/24
+    - Stocks class: Process transactions and update the owned shares dictionary.
+    - PortfolioManager class: current_portfolio_value, stock_percentage_of_portfolio
+    
+"""
+
 import pandas as pd
 from app.data_fetching import fetch_stock_prices, fetch_exchange_rate
 from app.loader import DataLoader
