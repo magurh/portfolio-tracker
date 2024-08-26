@@ -3,9 +3,9 @@ from tkinter import ttk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
-from app.loader import DataLoader
-from app.metrics import PortfolioManager
-from app.config import type1_df_path, type2_df_path, type3_df_path
+from portfolio_tracker.loader import DataLoader
+from portfolio_tracker.metrics import PortfolioManager
+from portfolio_tracker.config import type1_df_path, type2_df_path, type3_df_path
 
 class PortfolioGUI(tk.Tk):
     def __init__(self):

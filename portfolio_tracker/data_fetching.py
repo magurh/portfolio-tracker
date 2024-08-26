@@ -1,10 +1,10 @@
 import ffn
 import yfinance as yf
-from app.config import crypto_exchange_map
+from portfolio_tracker.config import crypto_exchange_map
 import ccxt
 import requests
 # from forex_python.converter import CurrencyRates
-import requests
+
 
 def fetch_exchange_rate(base_currency, target_currency):
     """

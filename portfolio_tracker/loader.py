@@ -1,7 +1,20 @@
+"""
+There are 3 types of datasets:
+1. type1: ['date', 'security', 'type_of_asset', 'action', 'quantity', 'total_transaction_price_usd']
+
+This is the "fundamental type of dataset, which will be initially implemented in the portfolio tracker.
+
+Future features will include crypto-currencies and commisions through:
+
+2. type2: ['date', 'security_1', 'security_2', 'quantity_security_1', 'quantity_security_2']
+3. type3: ['date', 'commission', 'amount']
+
+"""
+
 import numpy as np
 import pandas as pd
 import datetime
-from app.config import type1_df_path, type2_df_path, type3_df_path
+from portfolio_tracker.config import type1_df_path, type2_df_path, type3_df_path
 
 CURRENT_DATE = datetime.datetime.now().date()
 

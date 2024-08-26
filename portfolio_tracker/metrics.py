@@ -6,8 +6,8 @@ Latest updates: 03/Aug/24
 """
 
 import pandas as pd
-from app.data_fetching import fetch_stock_prices, fetch_exchange_rate
-from app.loader import DataLoader
+from portfolio_tracker.data_fetching import fetch_stock_prices, fetch_exchange_rate
+from portfolio_tracker.loader import DataLoader
 
 class Stocks:
     def __init__(self):
