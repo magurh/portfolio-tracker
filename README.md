@@ -29,41 +29,18 @@ git clone https://github.com/magurh/ML-encryption.git
 cd ML-encryption
 ```
 
-2. Create and Activate Virtual Environment
-
-On Windows:
-```
-python -m venv venv
-venv\Scripts\activate
-```
-
-On MacOS/Linux:
-```
-python3 -m venv venv
-source venv/bin/activate
-```
-
-3. Install dependencies
+2. Poetry is used for dependency management. Whenever new dependencies are added, run:
 
 ```
-pip install -r requirements.txt
+poetry install
 ```
 
-4. Set path (for absolute imports)
-
-On Windows:
-```
-set PYTHONPATH=.
-```
-
-On MacOS/Linux:
-```
-export PYTHONPATH=.
-```
-
-5. Run app:
+To use Jupyter Lab, set the kernel to the fast-updates-monitoring environment created by poetry:
 
 ```
-python app/gui.py
+poetry run python -m ipykernel install --user --name=fast-updates-analysis
 ```
+
+One can open Jupyter lab using `poetry run jupyter lab`. For simply activating the virtual environment, run: `poetry shell`.
+To add new dependencies, use: `poetry add <dependency>`.
 

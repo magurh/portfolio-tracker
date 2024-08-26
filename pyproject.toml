@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "portfolio-tracker"
+version = "0.1.0"
+description = ""
+authors = ["magurh <magureanuhoria@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.14"
+numpy = "^2.1.0"
+pandas = "^2.2.2"
+matplotlib = "^3.9.2"
+plotly = "^5.23.0"
+yfinance = "^0.2.43"
+ccxt = "^4.3.89"
+ffn = "^1.1.0"
+pyinstaller = "^6.10.0"
+jupyter = "^1.0.0"
+lab = "^8.2"
+jupyterlab = "^4.2.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
