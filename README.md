@@ -7,14 +7,12 @@
 Stock Analytics:
 
 - [x] Current portfolio dashboard: valuation and breakdown
-    - [x] Defined all neccesary functions
-    - ⏳ GUI integration
-- [ ] Realized and unrealized gains from historic positions
+- [X] Realized and unrealized gains from historic positions (FIFO method)
 - [ ] Portfolio performance over time and benchmark comparison
 - [ ] Dividends and Commissions
 - [ ] Tax calculation on capital gains
 
-To be added:
+To be added at a later stage:
 - [ ] Index funds
 - [ ] Crypto assets
 - [ ] Forex and cash positions

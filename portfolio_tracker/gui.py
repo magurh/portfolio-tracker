@@ -4,7 +4,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
 from portfolio_tracker.loader import DataLoader
-from portfolio_tracker.metrics import PortfolioManager
+from portfolio_tracker.manager import PortfolioManager
 from portfolio_tracker.config import type1_df_path, type2_df_path, type3_df_path
 
 class PortfolioGUI(tk.Tk):

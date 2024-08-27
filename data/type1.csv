@@ -5,3 +5,5 @@ date,security,type_of_asset,action,quantity,total_transaction_price_usd
 01/04/2023,VOO,index fund,buy,15,4500
 01/05/2023,ETH,crypto,sell,0.1,2500
 01/06/2023,TSLA,stock,sell,5,325
+01/08/2023,TSLA,stock,buy,3,310
+01/20/2023,TSLA,stock,sell,4,810
