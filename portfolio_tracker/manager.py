@@ -38,8 +38,8 @@ class Stocks:
             security = transaction['security']
             action = transaction['action']
             quantity = transaction['quantity']
-            total_price = transaction['total_transaction_price_usd']
-            price_per_share = total_price / quantity
+            total_price = transaction['total_transaction_price']
+            price_per_share = transaction['price_per_share']
             
             if security not in self.owned_shares:
                 self.owned_shares[security] = deque()
@@ -49,8 +49,10 @@ class Stocks:
                 self.owned_shares[security].append((quantity, price_per_share))
             elif action == 'sell':
                 self._sell_shares(security, quantity, price_per_share)
-            else:
-                raise ValueError(f"Invalid action: {action}")
+
+            # Remove the security from owned_shares if the total quantity is zero
+            if sum(quantity for quantity, _ in self.owned_shares[security]) <= 0:
+                del self.owned_shares[security]
     
     def _sell_shares(self, security, quantity, selling_price):
         """
@@ -94,6 +96,7 @@ class Stocks:
         """
         owned_assets = {security: sum(quantity for quantity, _ in lots) 
                         for security, lots in self.owned_shares.items()}
+        
         return owned_assets
     
     def fetch_current_values(self):
@@ -147,7 +150,7 @@ class PortfolioManager:
         """
         Update the current values of the stocks and store them in an internal attribute.
         """
-        self._current_values = self.stocks.fetch_current_values()
+        self._current_values = self.stocks.fetch_current_values()[0]
     
     def current_portfolio_value(self):
         """

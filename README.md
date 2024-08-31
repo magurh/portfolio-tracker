@@ -13,6 +13,7 @@ Stock Analytics:
 - [ ] Tax calculation on capital gains
 
 To be added at a later stage:
+- [ ] Compatibility with Google sheets
 - [ ] Index funds
 - [ ] Crypto assets
 - [ ] Forex and cash positions
