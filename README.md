@@ -4,7 +4,7 @@
 
 ### Status
 
-Stock Analytics:
+Stock Analytics: (Currently only testing in jupyter notebooks)
 
 - [x] Current portfolio dashboard: valuation and breakdown
 - [X] Realized and unrealized gains from historic positions (FIFO method)
@@ -14,9 +14,12 @@ Stock Analytics:
 
 To be added at a later stage:
 - [ ] Compatibility with Google sheets
-- [ ] Index funds
+- [x] Index funds
 - [ ] Crypto assets
 - [ ] Forex and cash positions
+
+Bugs to be fixed:
+- [ ] Fetching exchange rates
 
 
 ### Setup
@@ -43,3 +46,5 @@ poetry run python -m ipykernel install --user --name=fast-updates-analysis
 One can open Jupyter lab using `poetry run jupyter lab`. For simply activating the virtual environment, run: `poetry shell`.
 To add new dependencies, use: `poetry add <dependency>`.
 
+
+3. Add your data in the `data` folder and follow formatting instructions [TBD]. Make sure that all tickers are available through `yfinance` package -- for instance, VUSA needs to be replaced by VUSA.AS.
