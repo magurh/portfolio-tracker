@@ -1,3 +1,6 @@
+import numpy as np
+import pandas as pd
+
 import ffn
 import yfinance as yf
 from portfolio_tracker.config import crypto_exchange_map
@@ -6,26 +9,58 @@ import requests
 # from forex_python.converter import CurrencyRates
 
 
-def fetch_exchange_rate(base_currency, target_currency):
+def fetch_exchange_rate(base_currency, target_currency, start_date, end_date):
     """
-    Fetches the exchange rate between two currencies.
+    Fetches the exchange rates between two currencies for a specific date range.
 
     Parameters:
     - base_currency: Base currency code (e.g., 'USD')
     - target_currency: Target currency code (e.g., 'GBP')
+    - start_date: Start date for the data (YYYY-MM-DD)
+    - end_date: End date for the data (YYYY-MM-DD)
 
     Returns:
-    - Exchange rate from base_currency to target_currency.
+    - DataFrame with exchange rates and dates formatted as '%m/%d/%Y'.
     """
     ticker = f"{base_currency}{target_currency}=X"
     data = yf.Ticker(ticker)
-    hist = data.history(period="1d")
+    
+    # Fetch data with a slightly larger range to ensure start_date is included
+    fetch_start_date = pd.to_datetime(start_date) - pd.DateOffset(days=5)
+    fetch_end_date = pd.to_datetime(end_date) + pd.DateOffset(days=5)
+    
+    hist = data.history(start=fetch_start_date, end=fetch_end_date)
+    
     if not hist.empty:
-        return hist['Close'][0]
+        # Reset index to have 'Date' as a column
+        hist_reset = hist[['Close']].reset_index()
+        
+        # Format the 'Date' column
+        hist_reset['Date'] = hist_reset['Date'].dt.strftime('%m/%d/%Y')
+        hist_reset = hist_reset.rename(columns={'Close': 'exchange_rate'})
+        
+        # Set the formatted date column as the index
+        hist_reset = hist_reset[['Date', 'exchange_rate']]
+        hist_reset.set_index('Date', inplace=True)
+        
+        # Ensure the DataFrame includes all dates from start_date to end_date
+        all_dates = pd.date_range(start=start_date, end=end_date).strftime('%m/%d/%Y')
+        full_df = pd.DataFrame(index=all_dates)
+        full_df = full_df.join(hist_reset, how='left')
+        
+        # Fill in missing values
+        full_df['exchange_rate'] = full_df['exchange_rate'].ffill()  # Forward fill
+        full_df['exchange_rate'] = full_df['exchange_rate'].bfill()  # Backward fill
+        
+        return full_df
     else:
-        return None
+        # Return an empty DataFrame with the correct columns if no data was fetched
+        all_dates = pd.date_range(start=start_date, end=end_date).strftime('%m/%d/%Y')
+        full_df = pd.DataFrame(index=all_dates, columns=['exchange_rate'])
+        return full_df
 
 
+### BUG: currency change for the below functions
 
 def fetch_stock_prices(symbols, currency='USD'):
     """

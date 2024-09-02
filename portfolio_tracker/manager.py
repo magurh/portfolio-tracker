@@ -20,6 +20,9 @@ class Stocks:
         self.realized_gains_per_asset = {}
         # Track unrealized gains per asset
         self.unrealized_gains_per_asset = {}
+        # Initialize exchange rates
+        self.exchange_rates =  {}
+
     
     def process_transactions(self, transactions):
         """
@@ -29,18 +32,43 @@ class Stocks:
         - transactions (DataFrame): DataFrame containing transactional data with columns:
             - 'date': Date of the transaction
             - 'security': Name of the security (e.g., 'TSLA')
-            - 'type_of_asset': Type of asset ('Stock', 'Crypto', etc.)
+            - 'type_of_asset': Type of asset ('stock', 'crypto', 'index_fund' etc.)
             - 'action': Action of the transaction ('buy' or 'sell')
             - 'quantity': Number of shares involved in the transaction
             - 'total_transaction_price_usd': Total transaction price in USD at the time of transaction
         """
+        # Extract currencies and fetch exchange rates
+        currencies = transactions['currency'].unique()
+        
+        earliest_dates = {}
+        for currency in currencies:
+            if currency != 'USD':
+                earliest_date = transactions[transactions['currency'] == currency]['date'].min()
+                earliest_dates[currency] = earliest_date
+
+        end_date = pd.Timestamp.now().strftime('%Y-%m-%d')  # Current date
+        for currency, earliest_date in earliest_dates.items():
+            self.exchange_rates[currency] = fetch_exchange_rate(currency, 'USD', earliest_date, end_date)
+                
+        
         for _, transaction in transactions.iterrows():
             security = transaction['security']
             action = transaction['action']
             quantity = transaction['quantity']
             total_price = transaction['total_transaction_price']
             price_per_share = transaction['price_per_share']
-            
+            currency = transaction['currency']
+            date = transaction['date']
+
+            if currency != 'USD':
+                exchange_rate = self.exchange_rates[currency].loc[date.strftime('%m/%d/%Y'), 'exchange_rate']
+                if pd.isna(exchange_rate):
+                    raise ValueError(f"Exchange rate not available for {currency} on {date}")
+                price_per_share = price_per_share*exchange_rate
+                total_price = total_price*exchange_rate
+
+
+                
             if security not in self.owned_shares:
                 self.owned_shares[security] = deque()
             
@@ -143,7 +171,7 @@ class PortfolioManager:
     def __init__(self, transactions):
         self.transactions = transactions
         self.stocks = Stocks()
-        self.stocks.process_transactions(self.transactions[self.transactions['type_of_asset'] == 'stock'])
+        self.stocks.process_transactions(self.transactions[self.transactions['type_of_asset'] == 'stock' or self.transactions['type_of_asset'] == 'index_funds'])
         self._current_values = None
     
     def _update_current_values(self):

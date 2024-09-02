@@ -19,6 +19,8 @@ pyinstaller = "^6.10.0"
 jupyter = "^1.0.0"
 lab = "^8.2"
 jupyterlab = "^4.2.5"
+adjusttext = "^1.2.0"
+seaborn = "^0.13.2"
 
 
 [build-system]

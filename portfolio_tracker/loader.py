@@ -33,19 +33,19 @@ class DataLoader:
 
     def _convert_types(self):
         """
-        Convert columns to appropriate data types.
+        Convert columns to appropriate data types and sort type1_df by date.
         """
-        # Helper function to clean and convert to float
         def clean_and_convert_to_float(series):
             # Ensure the series is a string, then remove commas and convert to float
             return series.astype(str).str.replace(',', '').astype(float)
 
-        # Convert columns in type1_df
         self.type1_df['quantity'] = clean_and_convert_to_float(self.type1_df['quantity'])
         self.type1_df['price_per_share'] = clean_and_convert_to_float(self.type1_df['price_per_share'])
         self.type1_df['total_transaction_price'] = clean_and_convert_to_float(self.type1_df['total_transaction_price'])
         self.type1_df['date'] = pd.to_datetime(self.type1_df['date'], format='%m/%d/%Y')
 
+        # Sort by date
+        self.type1_df.sort_values(by='date', inplace=True)
 
 
     def get_type1_data(self):
