@@ -15,6 +15,7 @@ Stock Analytics: (Currently only testing in jupyter notebooks)
 To be added at a later stage:
 - [ ] Compatibility with Google sheets
 - [x] Index funds
+    - TODO: Possibly create separate tracker for owned index funds from individual stocks
 - [ ] Crypto assets
 - [ ] Forex and cash positions
 

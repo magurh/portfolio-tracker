@@ -8,7 +8,6 @@ Latest updates: 03/Aug/24
 import pandas as pd
 from collections import deque
 from portfolio_tracker.data_fetching import fetch_stock_prices, fetch_exchange_rate
-from portfolio_tracker.loader import DataLoader
 
 
 class Stocks:
@@ -76,13 +75,13 @@ class Stocks:
                 # Add the new purchase as a lot to the deque for this security
                 self.owned_shares[security].append((quantity, price_per_share))
             elif action == 'sell':
-                self._sell_shares(security, quantity, price_per_share)
+                self._sell_shares(security, quantity, price_per_share, date)
 
             # Remove the security from owned_shares if the total quantity is zero
             if sum(quantity for quantity, _ in self.owned_shares[security]) <= 0:
                 del self.owned_shares[security]
     
-    def _sell_shares(self, security, quantity, selling_price):
+    def _sell_shares(self, security, quantity, selling_price, transaction_date):
         """
         Helper function to sell shares using the FIFO method and update realized gains.
         
@@ -90,6 +89,7 @@ class Stocks:
         - security: The stock being sold.
         - quantity: The number of shares being sold.
         - selling_price: The price at which the shares are being sold.
+        - transaction_date
         """
         if security not in self.owned_shares or sum(q for q, _ in self.owned_shares[security]) < quantity:
             raise ValueError(f"Not enough shares of {security} to sell {quantity}")
@@ -102,18 +102,25 @@ class Stocks:
                 realized_gain = remaining_quantity * (selling_price - lot_price)
                 self.realized_gains += realized_gain
                 if security not in self.realized_gains_per_asset:
-                    self.realized_gains_per_asset[security] = 0
-                self.realized_gains_per_asset[security] += realized_gain
+                    self.realized_gains_per_asset[security] = [0, 0, 0, 0] # (realized_gains, total_sold_value, total_shares_sold, date_of_last_sell) # 0 
+
+                # Updates self.realized_gains_per_asset dictionary
+                self.realized_gains_per_asset[security][0] += realized_gain
+                        
                 self.owned_shares[security][0] = (lot_quantity - remaining_quantity, lot_price)
                 remaining_quantity = 0
             else:
                 realized_gain = lot_quantity * (selling_price - lot_price)
                 self.realized_gains += realized_gain
                 if security not in self.realized_gains_per_asset:
-                    self.realized_gains_per_asset[security] = 0
-                self.realized_gains_per_asset[security] += realized_gain
+                    self.realized_gains_per_asset[security] = [0, 0, 0, 0] # (realized_gains, total_sold_value, total_shares_sold, date_of_last_sell)  # 0 
+                self.realized_gains_per_asset[security][0] += realized_gain
                 remaining_quantity -= lot_quantity
                 self.owned_shares[security].popleft()
+
+        self.realized_gains_per_asset[security][1] += quantity*selling_price
+        self.realized_gains_per_asset[security][2] += quantity
+        self.realized_gains_per_asset[security][3] = transaction_date
     
     def get_owned_assets(self):
         """
@@ -168,10 +175,10 @@ class Stocks:
 
 
 class PortfolioManager:
-    def __init__(self, transactions):
+    def __init__(self, transactions, asset_type: str):
         self.transactions = transactions
         self.stocks = Stocks()
-        self.stocks.process_transactions(self.transactions[self.transactions['type_of_asset'] == 'stock' or self.transactions['type_of_asset'] == 'index_funds'])
+        self.stocks.process_transactions(self.transactions[(self.transactions['type_of_asset'] == 'stock') | (self.transactions['type_of_asset'] == 'index_fund')])
         self._current_values = None
     
     def _update_current_values(self):

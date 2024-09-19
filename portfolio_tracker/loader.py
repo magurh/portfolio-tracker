@@ -14,7 +14,7 @@ Future features will include crypto-currencies and commisions through:
 import numpy as np
 import pandas as pd
 import datetime
-from portfolio_tracker.config import type1_df_path, type2_df_path, type3_df_path
+# from portfolio_tracker.config import type1_PATH, type2_PATH, type3_PATH
 
 CURRENT_DATE = datetime.datetime.now().date()
 

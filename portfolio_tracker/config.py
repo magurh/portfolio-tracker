@@ -2,15 +2,15 @@ import os
 
 def get_data_folder_path():
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    data_folder = os.path.join(current_dir, '..', 'data')
+    data_folder = os.path.join(current_dir, '..', 'data/personal_data')
     return data_folder
 
-# Manually set paths to data files
-data_path = get_data_folder_path()
 
-type1_df_path = os.path.join(data_path, 'type1.csv')
-type2_df_path = os.path.join(data_path, 'type2.csv')
-type3_df_path = os.path.join(data_path, 'type3.csv')
+DATA_PATH = get_data_folder_path()
+
+type1_PATH = os.path.join(DATA_PATH, 'type1.csv')
+type2_PATH = os.path.join(DATA_PATH, 'type2.csv')
+type3_PATH = os.path.join(DATA_PATH, 'type3.csv')
 
 
 # Dictionary to map cryptocurrencies to specific exchanges
