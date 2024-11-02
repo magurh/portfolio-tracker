@@ -5,18 +5,19 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from adjustText import adjust_text
 
-from portfolio_tracker.config import type1_PATH
+from portfolio_tracker.config import config
 from portfolio_tracker.manager import Stocks, PortfolioManager
 from portfolio_tracker.loader import DataLoader
 from portfolio_tracker.data_fetching import fetch_stock_prices, fetch_exchange_rate
 
 from dash import dcc, html, dash_table, Dash
+from portfolio_tracker.layout import app_layout
 
 import plotly.express as px
 
 
 # Load data
-data_loader = DataLoader(type1_PATH)
+data_loader = DataLoader(config.type1_path)
 type1_data = data_loader.get_type1_data()
 
 # Process stock transactions and fetch current values
@@ -32,15 +33,35 @@ total_gains, realized_gains_dict = stocks.get_realized_gains()
 data = []
 for asset, gains_data in realized_gains_dict.items():
     realized_gains, total_sold_value, total_shares_sold, date_of_last_sell = gains_data
-    data.append([asset, total_shares_sold, date_of_last_sell, total_sold_value, realized_gains])
+    data.append([
+        asset, 
+        total_shares_sold, 
+        date_of_last_sell, 
+        total_sold_value, 
+        realized_gains
+    ])
 
 df_realized_gains = pd.DataFrame(data, columns=["asset", "Shares sold", "Date last sell", "Total value sold", "Realized gains"])
 df_realized_gains['Initial investment'] = df_realized_gains['Total value sold'] + df_realized_gains['Realized gains']
 df_realized_gains['Rate of return (%)'] =  df_realized_gains['Realized gains']/df_realized_gains['Initial investment']*100 # excluding dividents
-df_realized_gains = df_realized_gains[['asset', 'Initial investment', 'Shares sold', 'Total value sold', 'Date last sell', 'Realized gains', 'Rate of return (%)']]
+df_realized_gains = df_realized_gains[[
+                        'asset', 
+                        'Initial investment', 
+                        'Shares sold', 
+                        'Total value sold', 
+                        'Date last sell', 
+                        'Realized gains', 
+                        'Rate of return (%)'
+]]
 
 # Format columns
-columns_to_format = ['Realized gains', 'Rate of return (%)', 'Initial investment', 'Total value sold']
+columns_to_format = [
+                    'Realized gains', 
+                    'Rate of return (%)', 
+                    'Initial investment', 
+                    'Total value sold'
+]
+
 for column in columns_to_format:
     df_realized_gains[column] = df_realized_gains[column].apply(lambda x: f'{x:.2f}')
 df_realized_gains['Date last sell'] = df_realized_gains['Date last sell'].dt.strftime('%d-%m-%Y')
@@ -51,7 +72,9 @@ df_realized_gains['Date last sell'] = df_realized_gains['Date last sell'].dt.str
 app = Dash(__name__)
 
 # Create a table using Plotly's DataTable component
-app.layout = dash_table.DataTable(df_realized_gains.to_dict('records'), [{"name": i, "id": i} for i in df_realized_gains.columns])
+app.layout = app_layout
+
+
 
     
 #         id='realized-gains-table',

@@ -3,7 +3,7 @@ import pandas as pd
 
 import ffn
 import yfinance as yf
-from portfolio_tracker.config import crypto_exchange_map
+from portfolio_tracker.config import config
 import ccxt
 import requests
 # from forex_python.converter import CurrencyRates
@@ -98,7 +98,7 @@ def fetch_crypto_price(symbol, currency='USD'):
     Returns:
     - Current price of the cryptocurrency in the specified currency.
     """
-    exchange_name = crypto_exchange_map.get(symbol, 'binance')
+    exchange_name = config.crypto_exchange_map.get(symbol, 'binance')
     exchange = getattr(ccxt, exchange_name)()
     ticker = exchange.fetch_ticker(symbol + '/USDT')
     price = ticker['last']
