@@ -1,29 +1,27 @@
-[tool.poetry]
+[project]
 name = "portfolio-tracker"
 version = "0.1.0"
 description = ""
 authors = ["magurh <magureanuhoria@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.1.1",
+    "pandas>=2.2.2",
+    "python-dotenv>=1.0.1",
+    "requests>=2.32.3",
+    "tqdm>=4.66.5",
+    "web3>=7.2.0",
+    "seaborn",
+    "matplotlib",
+    "jupyterlab",
+    "dash",
+    "dash_bootstrap_components",
+    "plotly>=5.24.1",
+    "yfinance>=0.2.49",
+    "ccxt>=4.4.31",
+    "ffn>=1.1.1",
+    "adjusttext>=1.3.0",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.12,<3.14"
-numpy = "^2.1.0"
-pandas = "^2.2.2"
-matplotlib = "^3.9.2"
-plotly = "^5.23.0"
-yfinance = "^0.2.43"
-ccxt = "^4.3.89"
-ffn = "^1.1.0"
-pyinstaller = "^6.10.0"
-jupyter = "^1.0.0"
-lab = "^8.2"
-jupyterlab = "^4.2.5"
-adjusttext = "^1.2.0"
-seaborn = "^0.13.2"
-dash = "^2.18.1"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
