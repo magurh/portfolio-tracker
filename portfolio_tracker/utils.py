@@ -3,7 +3,10 @@ import os
 
 def get_data_folder_path(data_type: str = "public"):
     """
-    Get data folder path.
+    Get the folder path for storing datasets.
+
+    :param data_type: 'public' for shared datasets, 'private' for personal data.
+    :return: data folder path
     """
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -14,4 +17,4 @@ def get_data_folder_path(data_type: str = "public"):
     else:
         raise ValueError("Data type not supported.")
 
-    return data_folder
+    return os.path.abspath(data_folder)
