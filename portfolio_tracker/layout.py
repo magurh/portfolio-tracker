@@ -1,4 +1,5 @@
 import dash_bootstrap_components as dbc
+import pandas as pd
 from dash import dcc, html
 from dash.dash_table import DataTable
 
@@ -16,7 +17,7 @@ colors = [
 ]
 
 
-def generate_style_data_conditional():
+def generate_style_data_conditional() -> list:
     """Generate conditional styles for the DataTable."""
     style_data_conditional = []
     for col, bands in column_band_mapping.items():
@@ -36,7 +37,7 @@ def generate_style_data_conditional():
     return style_data_conditional
 
 
-def create_layout(df_realized_gains):
+def create_layout(df_realized_gains: pd.DataFrame, portfolio_overview: pd.DataFrame):
     """Create the layout for the Dash app."""
     style_data_conditional = generate_style_data_conditional()
 
@@ -48,6 +49,41 @@ def create_layout(df_realized_gains):
                     html.H1("Portfolio Tracker", className="text-center mb-4"),
                     width=12,
                 )
+            ),
+            # Portfolio Overview Table
+            dbc.Row(
+                [
+                    dbc.Col(
+                        dbc.Card(
+                            [
+                                dbc.CardHeader(html.H4("Portfolio Overview")),
+                                dbc.CardBody(
+                                    DataTable(
+                                        data=portfolio_overview.reset_index().to_dict("records"),
+                                        columns=[
+                                            {"name": "Metric", "id": "Metric"},
+                                            {"name": "Stocks", "id": "Stocks"},
+                                        ],
+                                        id="portfolio-overview-table",
+                                        style_table={"overflowX": "auto"},
+                                        style_data={
+                                            "backgroundColor": "rgb(50, 50, 50)",
+                                            "color": "white",
+                                        },
+                                        style_cell={"textAlign": "center"},
+                                        style_header={
+                                            "fontWeight": "bold",
+                                            "backgroundColor": "rgb(30, 30, 30)",
+                                            "color": "white",
+                                        },
+                                    )
+                                ),
+                            ],
+                            className="shadow-sm mb-4",
+                        ),
+                        width=12,
+                    ),
+                ]
             ),
             # Realized Gains Table
             dbc.Row(
@@ -92,6 +128,6 @@ def create_layout(df_realized_gains):
             # Interval component
             dcc.Interval(id="interval-component", interval=1 * 1000, n_intervals=0),
         ],
-        fluid=True,  # Use the fluid container for responsiveness
-        className="p-4",  # Add padding for a cleaner look
+        fluid=True,
+        className="p-4",
     )

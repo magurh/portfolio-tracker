@@ -1,19 +1,15 @@
-"""
-Latest updates: 03/Aug/24
-    - Stocks class: Process transactions and update the owned shares dictionary.
-    - PortfolioManager class: current_portfolio_value, stock_percentage_of_portfolio
-
-"""
-
 import pandas as pd
 from collections import deque
+
+from portfolio_tracker.config import format_dataframe
 from portfolio_tracker.data_fetching import fetch_stock_prices, fetch_exchange_rate
 
 
 class Stocks:
-    def __init__(self):
+    def __init__(self) -> None:
         # Dictionary to track owned shares for each stock, where each stock maps to a deque of lots
         self.owned_shares = {}
+        self.investment_per_asset = {}
         # Track total realized gains and gains per asset
         self.realized_gains = 0
         self.realized_gains_per_asset = {}
@@ -22,7 +18,7 @@ class Stocks:
         # Initialize exchange rates
         self.exchange_rates = {}
 
-    def process_transactions(self, transactions):
+    def process_transactions(self, transactions: pd.DataFrame) -> None:
         """
         Process transactions and update the owned shares dictionary.
 
@@ -74,18 +70,21 @@ class Stocks:
 
             if security not in self.owned_shares:
                 self.owned_shares[security] = deque()
+                self.investment_per_asset[security] = 0
 
             if action == "buy":
                 # Add the new purchase as a lot to the deque for this security
                 self.owned_shares[security].append((quantity, price_per_share))
+                self.investment_per_asset[security] += total_price
             elif action == "sell":
                 self._sell_shares(security, quantity, price_per_share, date)
 
             # Remove the security from owned_shares if the total quantity is zero
             if sum(quantity for quantity, _ in self.owned_shares[security]) <= 0:
                 del self.owned_shares[security]
+                del self.investment_per_asset[security]
 
-    def _sell_shares(self, security, quantity, selling_price, transaction_date):
+    def _sell_shares(self, security: str, quantity: float, selling_price: float, transaction_date) -> None:
         """
         Helper function to sell shares using the FIFO method and update realized gains.
 
@@ -123,6 +122,7 @@ class Stocks:
                     lot_quantity - remaining_quantity,
                     lot_price,
                 )
+                self.investment_per_asset[security] -= remaining_quantity * lot_price
                 remaining_quantity = 0
             else:
                 realized_gain = lot_quantity * (selling_price - lot_price)
@@ -136,13 +136,14 @@ class Stocks:
                     ]  # (realized_gains, total_sold_value, total_shares_sold, date_of_last_sell)  # 0
                 self.realized_gains_per_asset[security][0] += realized_gain
                 remaining_quantity -= lot_quantity
+                self.investment_per_asset[security] -= lot_quantity * lot_price
                 self.owned_shares[security].popleft()
 
         self.realized_gains_per_asset[security][1] += quantity * selling_price
         self.realized_gains_per_asset[security][2] += quantity
         self.realized_gains_per_asset[security][3] = transaction_date
 
-    def get_owned_assets(self):
+    def get_owned_assets(self) -> dict[str, float]:
         """
         Get the current number of shares owned for each stock.
 
@@ -156,7 +157,7 @@ class Stocks:
 
         return owned_assets
 
-    def fetch_current_values(self):
+    def fetch_current_values(self) -> tuple[dict, dict]:
         """
         Fetch the current values and unrealized gains of the stocks currently owned.
 
@@ -186,7 +187,7 @@ class Stocks:
 
         return current_values, self.unrealized_gains_per_asset
 
-    def get_realized_gains(self):
+    def get_realized_gains(self) -> tuple[float, dict]:
         """
         Get the total realized gains and realized gains per asset.
 
@@ -196,7 +197,7 @@ class Stocks:
         """
         return self.realized_gains, self.realized_gains_per_asset
 
-    def generate_realized_gains_dataframe(self):
+    def generate_realized_gains_dataframe(self) -> pd.DataFrame:
         """Build and return the DataFrame for realized gains."""
         _, realized_gains_dict = self.get_realized_gains()
 
@@ -231,20 +232,16 @@ class Stocks:
         df["Rate of return (%)"] = df["Realized gains"] / df["Initial investment"] * 100
         df["Date last sell"] = pd.to_datetime(df["Date last sell"])
 
-        # Format the DataFrame
-        from portfolio_tracker.config import format_dataframe
-
         return format_dataframe(df)
 
 
 class PortfolioManager:
-    def __init__(self, transactions, asset_type: str):
+    def __init__(self, transactions: pd.DataFrame, asset_type: str) -> None:
         self.transactions = transactions
         self.stocks = Stocks()
         self.stocks.process_transactions(
             self.transactions[
                 (self.transactions["type_of_asset"] == "stock")
-                | (self.transactions["type_of_asset"] == "index_fund")
             ]
         )
         self._current_values = None
@@ -287,3 +284,33 @@ class PortfolioManager:
             )
 
         return stock_percentages
+
+    def get_portfolio_overview(self) -> pd.DataFrame:
+        """Computes the portfolio overview for Index Funds and Stocks.
+
+        Returns:
+        - pd.DataFrame: A DataFrame with columns 'Index Funds' and 'Stocks',
+          and rows ['Current Value', 'Investment', 'Unrealized Gains'].
+        """
+        # Ensure current values are updated
+        if self._current_values is None:
+            self._update_current_values()
+
+        # Calculate current values and unrealized gains
+        current_values, unrealized_gains = self.stocks.fetch_current_values()
+
+        owned_stocks = {
+            k: v for k, v in self.stocks.investment_per_asset.items()
+            if self.transactions[self.transactions["security"] == k]["type_of_asset"].iloc[0] == "stock"
+        }
+        total_investment_stocks = sum(owned_stocks.values())
+        current_value_stocks = sum(current_values.get(k, 0) for k in owned_stocks.keys())
+        unrealized_gains_stocks = sum(unrealized_gains.get(k, 0) for k in owned_stocks.keys())
+
+        # Create overview DataFrame
+        overview = {
+            "Metric": ["Current Value", "Investment", "Unrealized Gains"],
+            "Stocks": [current_value_stocks, total_investment_stocks, unrealized_gains_stocks],
+        }
+
+        return pd.DataFrame(overview).set_index("Metric")
