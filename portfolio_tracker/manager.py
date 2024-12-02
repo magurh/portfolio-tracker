@@ -195,14 +195,16 @@ class Stocks:
         - realized_gains_per_asset (dict): A dictionary where keys are stock names and values are realized gains in USD.
         """
         return self.realized_gains, self.realized_gains_per_asset
-    
+
     def generate_realized_gains_dataframe(self):
         """Build and return the DataFrame for realized gains."""
         _, realized_gains_dict = self.get_realized_gains()
 
         data = []
         for asset, gains_data in realized_gains_dict.items():
-            realized_gains, total_sold_value, total_shares_sold, date_of_last_sell = gains_data
+            realized_gains, total_sold_value, total_shares_sold, date_of_last_sell = (
+                gains_data
+            )
             data.append(
                 [
                     asset,
@@ -226,9 +228,7 @@ class Stocks:
 
         # Add additional columns
         df["Initial investment"] = df["Total value sold"] + df["Realized gains"]
-        df["Rate of return (%)"] = (
-            df["Realized gains"] / df["Initial investment"] * 100
-        )
+        df["Rate of return (%)"] = df["Realized gains"] / df["Initial investment"] * 100
         df["Date last sell"] = pd.to_datetime(df["Date last sell"])
 
         # Format the DataFrame

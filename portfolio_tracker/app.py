@@ -2,7 +2,6 @@ from portfolio_tracker.layout import create_layout
 from portfolio_tracker.loader import DataLoader
 from portfolio_tracker.manager import Stocks
 from portfolio_tracker.config import config
-import pandas as pd
 from dash import Dash
 
 # Load data

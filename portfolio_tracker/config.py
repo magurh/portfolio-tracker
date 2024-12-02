@@ -30,6 +30,7 @@ COLUMNS_TO_FORMAT = [
 ]
 DATE_COLUMN = "Date last sell"
 
+
 # Formatting helper
 def format_dataframe(df):
     """Format numerical and date columns."""
