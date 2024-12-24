@@ -8,35 +8,49 @@ from dash.dash_table import DataTable
 from plotly.graph_objects import Figure
 
 def generate_style_data_conditional():
-    """Generate conditional styles for the DataTable."""
-    column_band_mapping = {
-        "pct_diff": [0, 1, 2, 5, 10],  # Example bands for pct_diff
-        "ref_vol": [0, 0.5, 1, 2, 3],  # Example bands for ref_vol
-    }
-
+    """
+    Generate conditional styles for the DataTable.
+    Applies coloring based on positive/negative values in specific columns.
+    """
     colors = [
-        ("#FFDDC1", "#000000"),
-        ("#FFC4A3", "#000000"),
-        ("#FFAAA5", "#000000"),
-        ("#FF8A80", "#FFFFFF"),
+        ("#00563E", "white"),  
+        ("#540202", "white"),
     ]
 
+    # Define the columns to apply conditional formatting
+    columns_to_style = [
+        "Realized gains",
+        "Rate of return (%)",
+    ]
+
+    # Generate the style rules
     style_data_conditional = []
-    for col, bands in column_band_mapping.items():
-        for i, (bg_color, text_color) in enumerate(colors):
-            low = 0 if i == 0 else bands[i - 1]
-            high = bands[i] if i < len(bands) else float("inf")
-            style_data_conditional.append(
-                {
-                    "if": {
-                        "filter_query": f"{{{col}}} >= {low} && {{{col}}} < {high}",
-                        "column_id": col,
-                    },
-                    "backgroundColor": bg_color,
-                    "color": text_color,
-                }
-            )
+    for col in columns_to_style:
+        # Rule for positive or zero values
+        style_data_conditional.append(
+            {
+                "if": {
+                    "filter_query": f"{{{col}}} >= 0",
+                    "column_id": col,
+                },
+                "backgroundColor": colors[0][0],
+                "color": colors[0][1],
+            }
+        )
+        # Rule for negative values
+        style_data_conditional.append(
+            {
+                "if": {
+                    "filter_query": f"{{{col}}} < 0",
+                    "column_id": col,
+                },
+                "backgroundColor": colors[1][0],
+                "color": colors[1][1],
+            }
+        )
+
     return style_data_conditional
+
 
 
 def create_portfolio_distribution_plot(
@@ -81,6 +95,8 @@ def create_unrealized_gains_plot(
     fig.update_traces(marker_color="blue", marker_line_color="black", marker_line_width=1)
     return fig
 
+# Generate conditional style
+style_data_conditional = generate_style_data_conditional()
 
 def create_layout(
     df_realized_gains: pd.DataFrame,
