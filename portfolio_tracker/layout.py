@@ -10,10 +10,10 @@ column_band_mapping = {
 }
 
 colors = [
-    ("#FFDDC1", "#000000"),  # Low bands (bg, text)
+    ("#FFDDC1", "#000000"),  
     ("#FFC4A3", "#000000"),
     ("#FFAAA5", "#000000"),
-    ("#FF8A80", "#FFFFFF"),  # High bands
+    ("#FF8A80", "#FFFFFF"),  
 ]
 
 
