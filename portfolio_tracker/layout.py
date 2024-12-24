@@ -1,24 +1,26 @@
 import dash_bootstrap_components as dbc
 import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+
 from dash import dcc, html
 from dash.dash_table import DataTable
+from plotly.graph_objects import Figure
 
-# Styling configurations
-column_band_mapping = {
-    "pct_diff": [0, 1, 2, 5, 10],  # Example bands for pct_diff
-    "ref_vol": [0, 0.5, 1, 2, 3],  # Example bands for ref_vol
-}
-
-colors = [
-    ("#FFDDC1", "#000000"),  
-    ("#FFC4A3", "#000000"),
-    ("#FFAAA5", "#000000"),
-    ("#FF8A80", "#FFFFFF"),  
-]
-
-
-def generate_style_data_conditional() -> list:
+def generate_style_data_conditional():
     """Generate conditional styles for the DataTable."""
+    column_band_mapping = {
+        "pct_diff": [0, 1, 2, 5, 10],  # Example bands for pct_diff
+        "ref_vol": [0, 0.5, 1, 2, 3],  # Example bands for ref_vol
+    }
+
+    colors = [
+        ("#FFDDC1", "#000000"),
+        ("#FFC4A3", "#000000"),
+        ("#FFAAA5", "#000000"),
+        ("#FF8A80", "#FFFFFF"),
+    ]
+
     style_data_conditional = []
     for col, bands in column_band_mapping.items():
         for i, (bg_color, text_color) in enumerate(colors):
@@ -37,7 +39,56 @@ def generate_style_data_conditional() -> list:
     return style_data_conditional
 
 
-def create_layout(df_realized_gains: pd.DataFrame, portfolio_overview: pd.DataFrame):
+def create_portfolio_distribution_plot(
+    owned_assets_dict: dict,
+    current_stock_values: dict,
+) -> Figure:
+    portfolio_values = {
+        stock: owned_assets_dict[stock] * current_stock_values[stock]
+        for stock in owned_assets_dict
+    }
+    labels = list(portfolio_values.keys())
+    sizes = list(portfolio_values.values())
+
+    fig = go.Figure(
+        data=[
+            go.Pie(
+                labels=labels,
+                values=sizes,
+                textinfo="label+percent",
+                hole=0.3,
+            )
+        ]
+    )
+    fig.update_layout(
+        title="Stock Portfolio Distribution by Current Value",
+        paper_bgcolor="#1e1e1e",  # Background of the figure
+        plot_bgcolor="#1e1e1e",  # Background of the plot area
+        font=dict(color="white"),  # Text color
+    )
+    return fig
+
+def create_unrealized_gains_plot(
+    unrealized_gains: dict,
+) -> Figure:
+    df = pd.DataFrame(list(unrealized_gains.items()), columns=["Stock", "Unrealized Gain"])
+    fig = px.bar(df, x="Stock", y="Unrealized Gain", title="Unrealized Gains")
+    fig.update_layout(
+        paper_bgcolor="#1e1e1e",  # Background of the figure
+        plot_bgcolor="#1e1e1e",  # Background of the plot area
+        font=dict(color="white"),  # Text color
+    )
+    fig.update_traces(marker_color="blue", marker_line_color="black", marker_line_width=1)
+    return fig
+
+
+def create_layout(
+    df_realized_gains: pd.DataFrame,
+    portfolio_overview: pd.DataFrame,
+    owned_assets_dict: dict,
+    current_stock_values: dict,
+    unrealized_gains_dict: dict,
+):
     """Create the layout for the Dash app."""
     style_data_conditional = generate_style_data_conditional()
 
@@ -76,6 +127,50 @@ def create_layout(df_realized_gains: pd.DataFrame, portfolio_overview: pd.DataFr
                                             "backgroundColor": "rgb(30, 30, 30)",
                                             "color": "white",
                                         },
+                                    )
+                                ),
+                            ],
+                            className="shadow-sm mb-4",
+                        ),
+                        width=12,
+                    ),
+                ]
+            ),
+            # Portfolio Distribution Plot
+            dbc.Row(
+                [
+                    dbc.Col(
+                        dbc.Card(
+                            [
+                                dbc.CardHeader(html.H4("Portfolio Distribution")),
+                                dbc.CardBody(
+                                    dcc.Graph(
+                                        id="portfolio-distribution",
+                                        figure=create_portfolio_distribution_plot(
+                                            owned_assets_dict, current_stock_values
+                                        ),
+                                    )
+                                ),
+                            ],
+                            className="shadow-sm mb-4",
+                        ),
+                        width=12,
+                    ),
+                ]
+            ),
+            # Unrealized Gains Plot
+            dbc.Row(
+                [
+                    dbc.Col(
+                        dbc.Card(
+                            [
+                                dbc.CardHeader(html.H4("Unrealized Gains")),
+                                dbc.CardBody(
+                                    dcc.Graph(
+                                        id="unrealized-gains",
+                                        figure=create_unrealized_gains_plot(
+                                            unrealized_gains_dict
+                                        ),
                                     )
                                 ),
                             ],
@@ -125,8 +220,6 @@ def create_layout(df_realized_gains: pd.DataFrame, portfolio_overview: pd.DataFr
                     ),
                 ]
             ),
-            # Interval component
-            dcc.Interval(id="interval-component", interval=1 * 1000, n_intervals=0),
         ],
         fluid=True,
         className="p-4",

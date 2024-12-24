@@ -13,10 +13,20 @@ portfolio_manager = PortfolioManager(type1_data, asset_type="stock")
 realized_gains_df = portfolio_manager.stocks.generate_realized_gains_dataframe()  
 portfolio_overview = portfolio_manager.get_portfolio_overview()
 
-# Create Dash app
-app = Dash(__name__)
-app.layout = create_layout(realized_gains_df, portfolio_overview)
+# Fetch current portfolio details
+owned_assets_dict = portfolio_manager.stocks.get_owned_assets()
+current_stock_values, unrealized_gains_dict = portfolio_manager.stocks.fetch_current_values()
 
+
+# Create Dash app
+app = Dash(__name__) #, external_stylesheets=["https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"])
+app.layout = create_layout(
+    realized_gains_df,
+    portfolio_overview,
+    owned_assets_dict,
+    current_stock_values,
+    unrealized_gains_dict,
+)
 
 # Run the app
 if __name__ == "__main__":
