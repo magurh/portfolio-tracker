@@ -84,7 +84,9 @@ class Stocks:
                 del self.owned_shares[security]
                 del self.investment_per_asset[security]
 
-    def _sell_shares(self, security: str, quantity: float, selling_price: float, transaction_date) -> None:
+    def _sell_shares(
+        self, security: str, quantity: float, selling_price: float, transaction_date
+    ) -> None:
         """
         Helper function to sell shares using the FIFO method and update realized gains.
 
@@ -240,9 +242,7 @@ class PortfolioManager:
         self.transactions = transactions
         self.stocks = Stocks()
         self.stocks.process_transactions(
-            self.transactions[
-                (self.transactions["type_of_asset"] == "stock")
-            ]
+            self.transactions[(self.transactions["type_of_asset"] == "stock")]
         )
         self._current_values = None
 
@@ -300,17 +300,29 @@ class PortfolioManager:
         current_values, unrealized_gains = self.stocks.fetch_current_values()
 
         owned_stocks = {
-            k: v for k, v in self.stocks.investment_per_asset.items()
-            if self.transactions[self.transactions["security"] == k]["type_of_asset"].iloc[0] == "stock"
+            k: v
+            for k, v in self.stocks.investment_per_asset.items()
+            if self.transactions[self.transactions["security"] == k][
+                "type_of_asset"
+            ].iloc[0]
+            == "stock"
         }
         total_investment_stocks = sum(owned_stocks.values())
-        current_value_stocks = sum(current_values.get(k, 0) for k in owned_stocks.keys())
-        unrealized_gains_stocks = sum(unrealized_gains.get(k, 0) for k in owned_stocks.keys())
+        current_value_stocks = sum(
+            current_values.get(k, 0) for k in owned_stocks.keys()
+        )
+        unrealized_gains_stocks = sum(
+            unrealized_gains.get(k, 0) for k in owned_stocks.keys()
+        )
 
         # Create overview DataFrame
         overview = {
             "Metric": ["Current Value", "Investment", "Unrealized Gains"],
-            "Stocks": [current_value_stocks, total_investment_stocks, unrealized_gains_stocks],
+            "Stocks": [
+                current_value_stocks,
+                total_investment_stocks,
+                unrealized_gains_stocks,
+            ],
         }
 
         return pd.DataFrame(overview).set_index("Metric")

@@ -7,13 +7,14 @@ from dash import dcc, html
 from dash.dash_table import DataTable
 from plotly.graph_objects import Figure
 
+
 def generate_style_data_conditional():
     """
     Generate conditional styles for the DataTable.
     Applies coloring based on positive/negative values in specific columns.
     """
     colors = [
-        ("#00563E", "white"),  
+        ("#00563E", "white"),
         ("#540202", "white"),
     ]
 
@@ -52,7 +53,6 @@ def generate_style_data_conditional():
     return style_data_conditional
 
 
-
 def create_portfolio_distribution_plot(
     owned_assets_dict: dict,
     current_stock_values: dict,
@@ -82,21 +82,28 @@ def create_portfolio_distribution_plot(
     )
     return fig
 
+
 def create_unrealized_gains_plot(
     unrealized_gains: dict,
 ) -> Figure:
-    df = pd.DataFrame(list(unrealized_gains.items()), columns=["Stock", "Unrealized Gain"])
+    df = pd.DataFrame(
+        list(unrealized_gains.items()), columns=["Stock", "Unrealized Gain"]
+    )
     fig = px.bar(df, x="Stock", y="Unrealized Gain", title="Unrealized Gains")
     fig.update_layout(
         paper_bgcolor="#1e1e1e",  # Background of the figure
         plot_bgcolor="#1e1e1e",  # Background of the plot area
         font=dict(color="white"),  # Text color
     )
-    fig.update_traces(marker_color="blue", marker_line_color="black", marker_line_width=1)
+    fig.update_traces(
+        marker_color="blue", marker_line_color="black", marker_line_width=1
+    )
     return fig
+
 
 # Generate conditional style
 style_data_conditional = generate_style_data_conditional()
+
 
 def create_layout(
     df_realized_gains: pd.DataFrame,
@@ -126,7 +133,9 @@ def create_layout(
                                 dbc.CardHeader(html.H4("Portfolio Overview")),
                                 dbc.CardBody(
                                     DataTable(
-                                        data=portfolio_overview.reset_index().to_dict("records"),
+                                        data=portfolio_overview.reset_index().to_dict(
+                                            "records"
+                                        ),
                                         columns=[
                                             {"name": "Metric", "id": "Metric"},
                                             {"name": "Stocks", "id": "Stocks"},
