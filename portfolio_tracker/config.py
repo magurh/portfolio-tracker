@@ -1,5 +1,7 @@
 from dataclasses import dataclass
+from dotenv import load_dotenv
 from pathlib import Path
+
 from portfolio_tracker.utils import get_data_folder_path
 
 
@@ -11,8 +13,21 @@ class Config:
     type3_path: Path
 
 
+def load_env_var(var_name: str) -> str:
+    """Loads and validates environment variables."""
+    env_var = os.getenv(var_name, default="")
+    if not env_var:
+        msg = f"'{var_name}' not found in env"
+        raise ValueError(msg)
+    return env_var
+
+
 # Set paths
-DATA_PATH = Path(get_data_folder_path(data_type="private"))
+PRIVATE_PATH = load_env_var("PRIVATE_PATH")
+if PRIVATE_PATH:
+    DATA_PATH = Path(get_data_folder_path(data_type="private"))
+else:
+    DATA_PATH = Path(get_data_folder_path())
 
 config = Config(
     data_path=DATA_PATH,

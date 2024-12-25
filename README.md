@@ -31,14 +31,21 @@ git clone https://github.com/magurh/portfolio-tracker.git
 cd portfolio-tracker
 ```
 
-2. `uv` is used for dependency management. Whenever new dependencies are added, run:
+2. `uv` is used for dependency management. 
+Follow the steps outlined in the [official documentation](https://docs.astral.sh/uv/getting-started/installation/#docker) for installation.
+Whenever new dependencies are added, or for initial repository setup, run:
 
 ```bash
 uv sync --all-extras
 ```
 
-3. Add your data in the `data` folder and follow formatting instructions [TBD]. 
-Make sure that all tickers are available through `yfinance` package -- for instance, VUSA needs to be replaced by VUSA.AS.
+3. Add your transactions in the `data` folder, following the formatting instructions of the csv files.
+Keep the same names for the spreadsheet files.
+Make sure that all tickers are available for the `yfinance` package -- for instance, VUSA needs to be replaced by VUSA.AS.
+
+4. Rename the `.env.dummy` file to `.env`.
+If data is saved in a private subdirectory inside the `data` folder, name this subdirectory `private_data`, and set `PRIVATE_PATH` to `True` inside the env file.
+Otherwise, no changes are needed to the environment variables.
 
 4. Run the visualizer:
 
