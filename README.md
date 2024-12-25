@@ -53,6 +53,17 @@ Otherwise, no changes are needed to the environment variables.
 uv run python -m portfolio_tracker.app
 ```
 
+5. Enjoy!
+
+<p align="center">
+  <img src="portfolio_distribution.jpg">
+</p>
+
+<p align="center">
+  <img src="unrealized_gains.jpg">
+</p>
+
+
 ## Extras 
 
 To use Jupyter Lab, set the kernel to the fast-updates-monitoring environment created by poetry:
