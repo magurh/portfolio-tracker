@@ -1,10 +1,13 @@
 import os
 
 from dataclasses import dataclass
+from dotenv import load_dotenv
 from pathlib import Path
 
 from portfolio_tracker.utils import get_data_folder_path
 
+# Load the .env file
+load_dotenv()
 
 @dataclass(frozen=True, kw_only=True)
 class Config:
@@ -25,10 +28,7 @@ def load_env_var(var_name: str) -> str:
 
 # Set paths
 PRIVATE_PATH = load_env_var("PRIVATE_PATH")
-if PRIVATE_PATH:
-    DATA_PATH = Path(get_data_folder_path(data_type="private"))
-else:
-    DATA_PATH = Path(get_data_folder_path())
+DATA_PATH = Path(get_data_folder_path(data_type=PRIVATE_PATH))
 
 config = Config(
     data_path=DATA_PATH,

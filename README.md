@@ -44,7 +44,7 @@ Keep the same names for the spreadsheet files.
 Make sure that all tickers are available for the `yfinance` package -- for instance, VUSA needs to be replaced by VUSA.AS.
 
 4. Rename the `.env.dummy` file to `.env`.
-If data is saved in a private subdirectory inside the `data` folder, name this subdirectory `private_data`, and set `PRIVATE_PATH` to `True` inside the env file.
+If data is saved in a private subdirectory inside the `data` folder, name this subdirectory `private_data`, and set `PRIVATE_PATH` to `"private"` inside the env file.
 Otherwise, no changes are needed to the environment variables.
 
 4. Run the visualizer:
