@@ -1,5 +1,6 @@
+import os
+
 from dataclasses import dataclass
-from dotenv import load_dotenv
 from pathlib import Path
 
 from portfolio_tracker.utils import get_data_folder_path

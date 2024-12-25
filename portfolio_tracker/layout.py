@@ -104,6 +104,7 @@ def create_unrealized_gains_plot(
 # Generate conditional style
 style_data_conditional = generate_style_data_conditional()
 
+
 def create_layout(
     df_realized_gains: pd.DataFrame,
     portfolio_overview: pd.DataFrame,
