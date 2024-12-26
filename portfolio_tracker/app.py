@@ -19,14 +19,20 @@ stock_manager = PortfolioManager(type1_data, asset_type="stock")
 stock_realized_gains = stock_manager.stocks.generate_realized_gains_dataframe()
 stock_portfolio_overview = stock_manager.get_portfolio_overview()
 stock_owned_assets = stock_manager.stocks.get_owned_assets()
-stock_current_values, stock_unrealized_gains = stock_manager.stocks.fetch_current_values()
+stock_current_values, stock_unrealized_gains = (
+    stock_manager.stocks.fetch_current_values()
+)
 
 # Precompute data for Index Funds
 index_fund_manager = PortfolioManager(type1_data, asset_type="index_fund")
-index_fund_realized_gains = index_fund_manager.stocks.generate_realized_gains_dataframe()
+index_fund_realized_gains = (
+    index_fund_manager.stocks.generate_realized_gains_dataframe()
+)
 index_fund_portfolio_overview = index_fund_manager.get_portfolio_overview()
 index_fund_owned_assets = index_fund_manager.stocks.get_owned_assets()
-index_fund_current_values, index_fund_unrealized_gains = index_fund_manager.stocks.fetch_current_values()
+index_fund_current_values, index_fund_unrealized_gains = (
+    index_fund_manager.stocks.fetch_current_values()
+)
 
 # Create Dash app
 app = Dash(__name__)
@@ -79,6 +85,7 @@ def update_tab_content(tab_value):
             index_fund_current_values,
             index_fund_unrealized_gains,
         )
+
 
 # Run the app
 if __name__ == "__main__":

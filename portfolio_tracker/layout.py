@@ -226,7 +226,10 @@ def create_tab_layout(
                                 dbc.CardBody(
                                     DataTable(
                                         data=df_realized_gains.to_dict("records"),
-                                        columns=[{"name": i, "id": i} for i in df_realized_gains.columns],
+                                        columns=[
+                                            {"name": i, "id": i}
+                                            for i in df_realized_gains.columns
+                                        ],
                                         id="realized-gains-table",
                                         style_table={"overflowX": "auto"},
                                         style_data={

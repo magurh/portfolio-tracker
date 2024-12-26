@@ -9,6 +9,7 @@ from portfolio_tracker.utils import get_data_folder_path
 # Load the .env file
 load_dotenv()
 
+
 @dataclass(frozen=True, kw_only=True)
 class Config:
     data_path: Path
