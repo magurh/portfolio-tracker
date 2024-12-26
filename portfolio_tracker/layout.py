@@ -7,6 +7,25 @@ from dash import dcc, html
 from dash.dash_table import DataTable
 from plotly.graph_objects import Figure
 
+from portfolio_tracker.config import config
+
+
+# Define style for tab buttons
+tab_style = {
+    "backgroundColor": config.bg_color,
+    "color": config.txt_color,
+    "padding": "10px",
+    "border": "1px solid #444",
+    "border-radius": "4px",
+}
+
+tab_selected_style = {
+    **tab_style,
+    "backgroundColor": "#444",  # Highlighted bg for the selected tab
+    "border": "1px solid #888",  # Distinct border for active tab
+    "fontWeight": "bold",  # Bold text for emphasis
+}
+
 
 def generate_style_data_conditional():
     """
@@ -14,8 +33,8 @@ def generate_style_data_conditional():
     Applies coloring based on positive/negative values in specific columns.
     """
     colors = [
-        ("#00563E", "white"),
-        ("#540202", "white"),
+        ("#00563E", config.txt_color),
+        ("#540202", config.txt_color),
     ]
 
     # Define the columns to apply conditional formatting
@@ -75,9 +94,9 @@ def create_portfolio_distribution_plot(
         ]
     )
     fig.update_layout(
-        paper_bgcolor="#1e1e1e",  # Background of the figure
-        plot_bgcolor="#1e1e1e",  # Background of the plot area
-        font=dict(color="white"),  # Text color
+        paper_bgcolor=config.bg_color,  # Background of the figure
+        plot_bgcolor=config.bg_color,  # Background of the plot area
+        font=dict(color=config.txt_color),  # Text color
     )
     return fig
 
@@ -90,9 +109,9 @@ def create_unrealized_gains_plot(
     )
     fig = px.bar(df, x="Ticker", y="Unrealized Gain", title="Unrealized Gains")
     fig.update_layout(
-        paper_bgcolor="#1e1e1e",  # Background of the figure
-        plot_bgcolor="#1e1e1e",  # Background of the plot area
-        font=dict(color="white"),  # Text color
+        paper_bgcolor=config.bg_color,  # Background of the figure
+        plot_bgcolor=config.bg_color,  # Background of the plot area
+        font=dict(color=config.txt_color),  # Text color
     )
     fig.update_traces(
         marker_color="blue", marker_line_color="black", marker_line_width=1
@@ -136,13 +155,13 @@ def create_tab_layout(
                                         style_table={"overflowX": "auto"},
                                         style_data={
                                             "backgroundColor": "rgb(50, 50, 50)",
-                                            "color": "white",
+                                            "color": config.txt_color,
                                         },
                                         style_cell={"textAlign": "center"},
                                         style_header={
                                             "fontWeight": "bold",
                                             "backgroundColor": "rgb(30, 30, 30)",
-                                            "color": "white",
+                                            "color": config.txt_color,
                                         },
                                     )
                                 ),
@@ -212,13 +231,13 @@ def create_tab_layout(
                                         style_table={"overflowX": "auto"},
                                         style_data={
                                             "backgroundColor": "rgb(50, 50, 50)",
-                                            "color": "white",
+                                            "color": config.txt_color,
                                         },
                                         style_cell={"textAlign": "center"},
                                         style_header={
                                             "fontWeight": "bold",
                                             "backgroundColor": "rgb(30, 30, 30)",
-                                            "color": "white",
+                                            "color": config.txt_color,
                                         },
                                         style_data_conditional=style_data_conditional,
                                         sort_action="native",

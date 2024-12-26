@@ -15,6 +15,8 @@ class Config:
     type1_path: Path
     type2_path: Path
     type3_path: Path
+    bg_color: str
+    txt_color: str
 
 
 def load_env_var(var_name: str) -> str:
@@ -35,6 +37,8 @@ config = Config(
     type1_path=DATA_PATH / "type1.csv",
     type2_path=DATA_PATH / "type2.csv",
     type3_path=DATA_PATH / "type3.csv",
+    bg_color="#1e1e1e",
+    txt_color="white",
 )
 
 # Formatting constants

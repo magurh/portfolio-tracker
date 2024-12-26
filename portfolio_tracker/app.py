@@ -1,7 +1,11 @@
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 
-from portfolio_tracker.layout import create_tab_layout
+from portfolio_tracker.layout import (
+    create_tab_layout,
+    tab_style,
+    tab_selected_style,
+)
 from portfolio_tracker.loader import DataLoader
 from portfolio_tracker.manager import PortfolioManager
 from portfolio_tracker.config import config
@@ -27,18 +31,29 @@ index_fund_current_values, index_fund_unrealized_gains = index_fund_manager.stoc
 # Create Dash app
 app = Dash(__name__)
 
-# Define the layout with tabs
+
+# Define the layout
 app.layout = html.Div(
     [
         dcc.Tabs(
             id="tabs",
-            value="stock", 
+            value="stock",  # Default tab
             children=[
-                dcc.Tab(label="Stocks", value="stock"),
-                dcc.Tab(label="Index Funds", value="index_fund"),
+                dcc.Tab(
+                    label="Stocks",
+                    value="stock",
+                    style=tab_style,
+                    selected_style=tab_selected_style,
+                ),
+                dcc.Tab(
+                    label="Index Funds",
+                    value="index_fund",
+                    style=tab_style,
+                    selected_style=tab_selected_style,
+                ),
             ],
         ),
-        html.Div(id="tab-content"),  
+        html.Div(id="tab-content"),
     ]
 )
 
