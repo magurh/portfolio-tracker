@@ -65,6 +65,7 @@ To be added at a later stage:
 
 Fixes:
 
+* [ ] Formatting for tables
 * [ ] Stock splits
 * [ ] Renaming and/or delistings of tickers
 
