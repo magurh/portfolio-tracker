@@ -50,16 +50,14 @@ uv run python -m portfolio_tracker.app
 Stock Analytics:
 
 * [x] Current portfolio dashboard: valuation and breakdown
-* [X] Realized and unrealized gains from historic positions (FIFO method)
+* [x] Realized and unrealized gains from historic positions (FIFO method)
+* [x] Separate tabs for stocks and index funds
 * [ ] Portfolio performance over time and benchmark comparison
 * [ ] Dividends and Commissions
 * [ ] Tax calculation on capital gains
 
 To be added at a later stage:
 
-* [ ] Compatibility with Google sheets
-* [ ] Index funds
-    * Possibly create separate tracker for owned index funds from individual stocks
 * [ ] Crypto assets
 * [ ] Forex and cash positions
 

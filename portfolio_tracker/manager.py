@@ -239,10 +239,11 @@ class Stocks:
 
 class PortfolioManager:
     def __init__(self, transactions: pd.DataFrame, asset_type: str) -> None:
+        self.asset_type = asset_type
         self.transactions = transactions
         self.stocks = Stocks()
         self.stocks.process_transactions(
-            self.transactions[(self.transactions["type_of_asset"] == "stock")]
+            self.transactions[(self.transactions["type_of_asset"] == asset_type)]
         )
         self._current_values = None
 
@@ -305,7 +306,7 @@ class PortfolioManager:
             if self.transactions[self.transactions["security"] == k][
                 "type_of_asset"
             ].iloc[0]
-            == "stock"
+            == self.asset_type
         }
         total_investment_stocks = sum(owned_stocks.values())
         current_value_stocks = sum(

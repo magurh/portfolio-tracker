@@ -75,7 +75,6 @@ def create_portfolio_distribution_plot(
         ]
     )
     fig.update_layout(
-        title="Stock Portfolio Distribution by Current Value",
         paper_bgcolor="#1e1e1e",  # Background of the figure
         plot_bgcolor="#1e1e1e",  # Background of the plot area
         font=dict(color="white"),  # Text color
@@ -87,9 +86,9 @@ def create_unrealized_gains_plot(
     unrealized_gains: dict,
 ) -> Figure:
     df = pd.DataFrame(
-        list(unrealized_gains.items()), columns=["Stock", "Unrealized Gain"]
+        list(unrealized_gains.items()), columns=["Ticker", "Unrealized Gain"]
     )
-    fig = px.bar(df, x="Stock", y="Unrealized Gain", title="Unrealized Gains")
+    fig = px.bar(df, x="Ticker", y="Unrealized Gain", title="Unrealized Gains")
     fig.update_layout(
         paper_bgcolor="#1e1e1e",  # Background of the figure
         plot_bgcolor="#1e1e1e",  # Background of the plot area
@@ -105,25 +104,18 @@ def create_unrealized_gains_plot(
 style_data_conditional = generate_style_data_conditional()
 
 
-def create_layout(
+def create_tab_layout(
     df_realized_gains: pd.DataFrame,
     portfolio_overview: pd.DataFrame,
     owned_assets_dict: dict,
     current_stock_values: dict,
     unrealized_gains_dict: dict,
 ):
-    """Create the layout for the Dash app."""
+    """Create the layout for a single tab in the Dash app."""
     style_data_conditional = generate_style_data_conditional()
 
     return dbc.Container(
         [
-            # Header
-            dbc.Row(
-                dbc.Col(
-                    html.H1("Portfolio Tracker", className="text-center mb-4"),
-                    width=12,
-                )
-            ),
             # Portfolio Overview Table
             dbc.Row(
                 [
@@ -215,10 +207,7 @@ def create_layout(
                                 dbc.CardBody(
                                     DataTable(
                                         data=df_realized_gains.to_dict("records"),
-                                        columns=[
-                                            {"name": i, "id": i}
-                                            for i in df_realized_gains.columns
-                                        ],
+                                        columns=[{"name": i, "id": i} for i in df_realized_gains.columns],
                                         id="realized-gains-table",
                                         style_table={"overflowX": "auto"},
                                         style_data={
@@ -247,7 +236,7 @@ def create_layout(
             ),
             # Spacer Row
             dbc.Row(
-                html.Div(style={"height": "100px"}),  # Adds 50px of vertical space
+                html.Div(style={"height": "100px"}),
             ),
         ],
         fluid=True,
