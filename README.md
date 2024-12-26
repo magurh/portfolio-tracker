@@ -3,25 +3,6 @@
 
 # Portfolio Tracker
 
-## Status
-
-Stock Analytics
-
-* [x] Current portfolio dashboard: valuation and breakdown
-* [X] Realized and unrealized gains from historic positions (FIFO method)
-* [ ] Portfolio performance over time and benchmark comparison
-* [ ] Dividends and Commissions
-* [ ] Tax calculation on capital gains
-
-To be added at a later stage:
-* [ ] Compatibility with Google sheets
-* [x] Index funds
-    * TODO: Possibly create separate tracker for owned index funds from individual stocks
-* [ ] Crypto assets
-* [ ] Forex and cash positions
-
-
-
 ## Setup
 
 1. Clone the repository:
@@ -63,6 +44,29 @@ uv run python -m portfolio_tracker.app
   <img src="unrealized_gains.jpg">
 </p>
 
+
+## Status
+
+Stock Analytics:
+
+* [x] Current portfolio dashboard: valuation and breakdown
+* [X] Realized and unrealized gains from historic positions (FIFO method)
+* [ ] Portfolio performance over time and benchmark comparison
+* [ ] Dividends and Commissions
+* [ ] Tax calculation on capital gains
+
+To be added at a later stage:
+
+* [ ] Compatibility with Google sheets
+* [ ] Index funds
+    * Possibly create separate tracker for owned index funds from individual stocks
+* [ ] Crypto assets
+* [ ] Forex and cash positions
+
+Fixes:
+
+* [ ] Stock splits
+* [ ] Renaming and/or delistings of tickers
 
 ## Extras 
 
