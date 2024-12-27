@@ -1,19 +1,20 @@
 import dash_bootstrap_components as dbc
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 
 from dash import dcc, html
 from dash.dash_table import DataTable
 from plotly.graph_objects import Figure
 
 from portfolio_tracker.config import config
-
+from portfolio_tracker.plotter import (
+    create_portfolio_distribution_plot,
+    create_unrealized_gains_plot,
+)
 
 # Define style for tab buttons
 tab_style = {
-    "backgroundColor": config.bg_color,
-    "color": config.txt_color,
+    "backgroundColor": config.colors.bg_color,
+    "color": config.colors.txt_color,
     "padding": "10px",
     "border": "1px solid #444",
     "border-radius": "4px",
@@ -33,8 +34,8 @@ def generate_style_data_conditional():
     Applies coloring based on positive/negative values in specific columns.
     """
     colors = [
-        ("#00563E", config.txt_color),
-        ("#540202", config.txt_color),
+        (config.colors.green_color, config.colors.txt_color),
+        (config.colors.red_color, config.colors.txt_color),
     ]
 
     # Define the columns to apply conditional formatting
@@ -72,55 +73,28 @@ def generate_style_data_conditional():
     return style_data_conditional
 
 
-def create_portfolio_distribution_plot(
-    owned_assets_dict: dict,
-    current_stock_values: dict,
-) -> Figure:
-    portfolio_values = {
-        stock: owned_assets_dict[stock] * current_stock_values[stock]
-        for stock in owned_assets_dict
-    }
-    labels = list(portfolio_values.keys())
-    sizes = list(portfolio_values.values())
-
-    fig = go.Figure(
-        data=[
-            go.Pie(
-                labels=labels,
-                values=sizes,
-                textinfo="label+percent",
-                hole=0.3,
-            )
-        ]
-    )
-    fig.update_layout(
-        paper_bgcolor=config.bg_color,  # Background of the figure
-        plot_bgcolor=config.bg_color,  # Background of the plot area
-        font=dict(color=config.txt_color),  # Text color
-    )
-    return fig
-
-
-def create_unrealized_gains_plot(
-    unrealized_gains: dict,
-) -> Figure:
-    df = pd.DataFrame(
-        list(unrealized_gains.items()), columns=["Ticker", "Unrealized Gain"]
-    )
-    fig = px.bar(df, x="Ticker", y="Unrealized Gain", title="Unrealized Gains")
-    fig.update_layout(
-        paper_bgcolor=config.bg_color,  # Background of the figure
-        plot_bgcolor=config.bg_color,  # Background of the plot area
-        font=dict(color=config.txt_color),  # Text color
-    )
-    fig.update_traces(
-        marker_color="blue", marker_line_color="black", marker_line_width=1
-    )
-    return fig
-
-
 # Generate conditional style
 style_data_conditional = generate_style_data_conditional()
+
+
+def create_figure_card(
+    title=str,
+    card_id=str,
+    figure=Figure,
+) -> dbc.Card:
+    """Creat a Dash Card for a Figure."""
+    return dbc.Card(
+        [
+            dbc.CardHeader(html.H4(title)),
+            dbc.CardBody(
+                dcc.Graph(
+                    id=card_id,
+                    figure=figure,
+                )
+            ),
+        ],
+        className="shadow-sm mb-4",
+    )
 
 
 def create_tab_layout(
@@ -149,19 +123,19 @@ def create_tab_layout(
                                         ),
                                         columns=[
                                             {"name": "Metric", "id": "Metric"},
-                                            {"name": "Stocks", "id": "Stocks"},
+                                            {"name": "Value (USD)", "id": "Stocks"},
                                         ],
                                         id="portfolio-overview-table",
                                         style_table={"overflowX": "auto"},
                                         style_data={
                                             "backgroundColor": "rgb(50, 50, 50)",
-                                            "color": config.txt_color,
+                                            "color": config.colors.txt_color,
                                         },
                                         style_cell={"textAlign": "center"},
                                         style_header={
                                             "fontWeight": "bold",
                                             "backgroundColor": "rgb(30, 30, 30)",
-                                            "color": config.txt_color,
+                                            "color": config.colors.txt_color,
                                         },
                                     )
                                 ),
@@ -176,19 +150,12 @@ def create_tab_layout(
             dbc.Row(
                 [
                     dbc.Col(
-                        dbc.Card(
-                            [
-                                dbc.CardHeader(html.H4("Portfolio Distribution")),
-                                dbc.CardBody(
-                                    dcc.Graph(
-                                        id="portfolio-distribution",
-                                        figure=create_portfolio_distribution_plot(
-                                            owned_assets_dict, current_stock_values
-                                        ),
-                                    )
-                                ),
-                            ],
-                            className="shadow-sm mb-4",
+                        create_figure_card(
+                            title="Portfolio Distribution",
+                            card_id="portfolio-distribution",
+                            figure=create_portfolio_distribution_plot(
+                                owned_assets_dict, current_stock_values
+                            ),
                         ),
                         width=12,
                     ),
@@ -198,19 +165,10 @@ def create_tab_layout(
             dbc.Row(
                 [
                     dbc.Col(
-                        dbc.Card(
-                            [
-                                dbc.CardHeader(html.H4("Unrealized Gains")),
-                                dbc.CardBody(
-                                    dcc.Graph(
-                                        id="unrealized-gains",
-                                        figure=create_unrealized_gains_plot(
-                                            unrealized_gains_dict
-                                        ),
-                                    )
-                                ),
-                            ],
-                            className="shadow-sm mb-4",
+                        create_figure_card(
+                            title="Unrealized Gains",
+                            card_id="unrealized-gains",
+                            figure=create_unrealized_gains_plot(unrealized_gains_dict),
                         ),
                         width=12,
                     ),
@@ -234,13 +192,13 @@ def create_tab_layout(
                                         style_table={"overflowX": "auto"},
                                         style_data={
                                             "backgroundColor": "rgb(50, 50, 50)",
-                                            "color": config.txt_color,
+                                            "color": config.colors.txt_color,
                                         },
                                         style_cell={"textAlign": "center"},
                                         style_header={
                                             "fontWeight": "bold",
                                             "backgroundColor": "rgb(30, 30, 30)",
-                                            "color": config.txt_color,
+                                            "color": config.colors.txt_color,
                                         },
                                         style_data_conditional=style_data_conditional,
                                         sort_action="native",

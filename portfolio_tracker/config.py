@@ -10,14 +10,22 @@ from portfolio_tracker.utils import get_data_folder_path
 load_dotenv()
 
 
+@dataclass(frozen=True)
+class VisualizerColors:
+    bg_color: str
+    txt_color: str
+    green_color: str
+    red_color: str
+    blue_color: str
+
+
 @dataclass(frozen=True, kw_only=True)
 class Config:
     data_path: Path
     type1_path: Path
     type2_path: Path
     type3_path: Path
-    bg_color: str
-    txt_color: str
+    colors: VisualizerColors
 
 
 def load_env_var(var_name: str) -> str:
@@ -38,24 +46,11 @@ config = Config(
     type1_path=DATA_PATH / "type1.csv",
     type2_path=DATA_PATH / "type2.csv",
     type3_path=DATA_PATH / "type3.csv",
-    bg_color="#1e1e1e",
-    txt_color="white",
+    colors=VisualizerColors(
+        bg_color="#1e1e1e",
+        txt_color="white",
+        green_color="#00563E",
+        red_color="#540202",
+        blue_color="lightseagreen",
+    ),
 )
-
-# Formatting constants
-COLUMNS_TO_FORMAT = [
-    "Realized gains",
-    "Rate of return (%)",
-    "Initial investment",
-    "Total value sold",
-]
-DATE_COLUMN = "Date last sell"
-
-
-# Formatting helper
-def format_dataframe(df):
-    """Format numerical and date columns."""
-    for column in COLUMNS_TO_FORMAT:
-        df[column] = df[column].apply(lambda x: f"{x:.2f}")
-    df[DATE_COLUMN] = df[DATE_COLUMN].dt.strftime("%d-%m-%Y")
-    return df

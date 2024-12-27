@@ -1,7 +1,7 @@
 import pandas as pd
 from collections import deque
 
-from portfolio_tracker.config import format_dataframe
+from portfolio_tracker.format import format_dataframe
 from portfolio_tracker.data_fetching import fetch_stock_prices, fetch_exchange_rate
 
 
