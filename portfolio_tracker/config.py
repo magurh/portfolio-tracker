@@ -26,6 +26,7 @@ class Config:
     type2_path: Path
     type3_path: Path
     colors: VisualizerColors
+    default_decimals: int
 
 
 def load_env_var(var_name: str) -> str:
@@ -53,4 +54,5 @@ config = Config(
         red_color="#540202",
         blue_color="lightseagreen",
     ),
+    default_decimals=1,
 )

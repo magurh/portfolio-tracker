@@ -2,7 +2,11 @@ import pandas as pd
 from collections import deque
 
 from portfolio_tracker.format import format_dataframe
-from portfolio_tracker.data_fetching import fetch_stock_prices, fetch_exchange_rate
+from portfolio_tracker.data_fetching import (
+    fetch_exchange_rate,
+    fetch_stock_prices,
+    fetch_stock_splits,
+)
 
 
 class Stocks:
@@ -17,6 +21,8 @@ class Stocks:
         self.unrealized_gains_per_asset = {}
         # Initialize exchange rates
         self.exchange_rates = {}
+        # Track stock splits {ticker: {date: split_ratio}}
+        self.applied_splits = {}
 
     def process_transactions(self, transactions: pd.DataFrame) -> None:
         """
@@ -221,7 +227,7 @@ class Stocks:
         df = pd.DataFrame(
             data,
             columns=[
-                "asset",
+                "Asset",
                 "Shares sold",
                 "Date last sell",
                 "Total value sold",
@@ -234,26 +240,69 @@ class Stocks:
         df["Rate of return (%)"] = df["Realized gains"] / df["Initial investment"] * 100
         df["Date last sell"] = pd.to_datetime(df["Date last sell"])
 
-        return format_dataframe(df)
+        COLUMNS_TO_FORMAT = [
+            "Realized gains",
+            "Rate of return (%)",
+            "Initial investment",
+            "Total value sold",
+        ]
+        DATE_COLUMN = "Date last sell"
+
+        return format_dataframe(
+            _dataframe=df,
+            cols_to_format=COLUMNS_TO_FORMAT,
+            date_column=DATE_COLUMN,
+        )
 
 
 class PortfolioManager:
     def __init__(self, transactions: pd.DataFrame, asset_type: str) -> None:
         self.asset_type = asset_type
-        self.transactions = transactions
+        self.transactions = transactions[transactions["type_of_asset"] == asset_type]
+
+        if self.transactions.empty:
+            raise ValueError(f"No transactions found for asset type: {asset_type}")
+
+        # Apply stock splits
+        self._apply_stock_splits()
+
+        # Initialize Stocks and process transactions
         self.stocks = Stocks()
         self.stocks.process_transactions(
-            self.transactions[(self.transactions["type_of_asset"] == asset_type)]
+            self.transactions
         )
         self._current_values = None
 
-    def _update_current_values(self):
+    def _apply_stock_splits(self) -> None:
+        """Applies stock splits to the transactions DataFrame."""
+        symbols = self.transactions["security"].unique()
+        stock_splits = fetch_stock_splits(symbols)
+
+        for stock, splits in stock_splits.items():
+            if splits.empty:
+                continue  # Skip if no splits for this stock
+
+            self._apply_splits_to_stock(stock, splits)
+
+    def _apply_splits_to_stock(self, stock: str, splits: pd.Series) -> None:
+        """Applies splits to the transactions of a single stock."""
+        for split_date, split_ratio in splits.sort_index().items():
+            split_date = pd.to_datetime(split_date).tz_localize(None)
+
+            # Identify relevant transactions for this stock and split date
+            mask = (self.transactions["security"] == stock) & (self.transactions["date"] < split_date)
+
+            if mask.any():
+                self.transactions.loc[mask, "quantity"] *= split_ratio
+                self.transactions.loc[mask, "price_per_share"] /= split_ratio
+
+    def _update_current_values(self) -> None:
         """
         Update the current values of the stocks and store them in an internal attribute.
         """
         self._current_values = self.stocks.fetch_current_values()[0]
 
-    def current_portfolio_value(self):
+    def current_portfolio_value(self) -> float:
         """
         Calculate the current value of the portfolio.
 
@@ -266,7 +315,7 @@ class PortfolioManager:
         total_value = sum(self._current_values.values())
         return total_value
 
-    def stock_percentage_of_portfolio(self):
+    def stock_percentage_of_portfolio(self) -> dict:
         """
         Calculate the percentage of each stock in the total portfolio.
 

@@ -6,7 +6,12 @@ import ccxt
 # from forex_python.converter import CurrencyRates
 
 
-def fetch_exchange_rate(base_currency, target_currency, start_date, end_date):
+def fetch_exchange_rate(
+    base_currency: str,
+    target_currency: str,
+    start_date,
+    end_date,
+) -> pd.DataFrame:
     """
     Fetches the exchange rates between two currencies for a specific date range.
 
@@ -57,10 +62,10 @@ def fetch_exchange_rate(base_currency, target_currency, start_date, end_date):
         return full_df
 
 
-### BUG: currency change for the below functions
-
-
-def fetch_stock_prices(symbols, currency="USD"):
+def fetch_stock_prices(
+    symbols: list[str],
+    currency: str="USD",
+) -> dict[str, float]:
     """
     Fetches the current prices of multiple stocks or index funds.
 
@@ -85,7 +90,10 @@ def fetch_stock_prices(symbols, currency="USD"):
     return prices
 
 
-def fetch_crypto_price(symbol, currency="USD"):
+def fetch_crypto_price(
+    symbol: str,
+    currency: str="USD",
+) -> float:
     """
     Fetches the current price of a cryptocurrency.
 
@@ -102,3 +110,21 @@ def fetch_crypto_price(symbol, currency="USD"):
     price = ticker["last"]
 
     return price if currency == "USD" else price * fetch_exchange_rate("USD", currency)
+
+
+def fetch_stock_splits(
+    symbols: str,
+) -> dict:
+    """Detects and applies stock splits to transactions."""
+    stock_splits = {}
+
+    for stock in symbols:
+        # Fetch stock splits using yfinance
+        try:
+            stock_data = yf.Ticker(stock)
+            stock_splits[stock] = stock_data.splits
+
+        except Exception as e:
+            print(f"Error fetching stock splits for {stock}: {e}")
+
+    return stock_splits

@@ -1,21 +1,12 @@
 import pandas as pd
 
-# Formatting columns for Portfolio Manager
-COLUMNS_TO_FORMAT = [
-    "Realized gains",
-    "Rate of return (%)",
-    "Initial investment",
-    "Total value sold",
-]
-DATE_COLUMN = "Date last sell"
-
 
 # Formatting helper for Portfolio Manager
 def format_dataframe(
     _dataframe: pd.DataFrame,
-    cols_to_format: list = COLUMNS_TO_FORMAT,
+    cols_to_format: list = "",
     decimals: int = 2,
-    date_column: str = DATE_COLUMN,
+    date_column: str = "",
 ) -> pd.DataFrame:
     """Format numerical and date columns."""
     # Format numerical column
