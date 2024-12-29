@@ -28,13 +28,14 @@ Make sure that all tickers are available for the `yfinance` package -- for insta
 If data is saved in a private subdirectory inside the `data` folder, name this subdirectory `private_data`, and set `PRIVATE_PATH` to `"private"` inside the env file.
 Otherwise, no changes are needed to the environment variables.
 
-4. Run the visualizer:
+5. Run the visualizer:
 
 ```bash
 uv run python -m portfolio_tracker.app
 ```
 
-5. Enjoy!
+
+Enjoy!
 
 <p align="center">
   <img src="portfolio_distribution.jpg">
@@ -45,7 +46,7 @@ uv run python -m portfolio_tracker.app
 </p>
 
 
-## Status
+## Status and Notes
 
 Stock Analytics:
 
@@ -63,8 +64,8 @@ To be added at a later stage:
 
 Fixes:
 
+* [x] Stock splits: as the tracker is aware of stock splits, make sure that the transactions are not manually adjusted for those.
 * [ ] Formatting for tables
-* [ ] Stock splits
 * [ ] Renaming and/or delistings of tickers
 
 ## Extras 
